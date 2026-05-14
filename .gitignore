@@ -1,0 +1,19 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# logs
+*.log
