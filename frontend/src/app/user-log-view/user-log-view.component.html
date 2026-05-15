@@ -16,13 +16,115 @@
         }
 
         <table class="log-table">
+          <colgroup>
+            <col [style.width.px]="columnWidth('id')" />
+            <col [style.width.px]="columnWidth('text')" />
+            <col [style.width.px]="columnWidth('userFullName')" />
+            <col [style.width.px]="columnWidth('dt')" />
+            <col [style.width.px]="columnWidth('eventType')" />
+          </colgroup>
           <thead>
             <tr>
-              <th class="log-table__col-id">Id</th>
-              <th>Текст</th>
-              <th>ФИО пользователя</th>
-              <th class="log-table__col-date">Дата</th>
-              <th>Тип события</th>
+              <th class="log-table__col-id">
+                <button
+                  type="button"
+                  class="log-table__sort-btn"
+                  [class.log-table__sort-btn--active]="isSortActive('id')"
+                  [attr.aria-sort]="ariaSort('id')"
+                  [disabled]="loading()"
+                  (click)="onSort('id')"
+                >
+                  Id
+                  <span class="log-table__sort-icon" aria-hidden="true">{{ sortIcon('id') }}</span>
+                </button>
+                <span
+                  class="log-table__resize-handle"
+                  role="separator"
+                  aria-orientation="vertical"
+                  [attr.aria-label]="columnResizeLabel('id')"
+                  (mousedown)="onColumnResizeStart($event, 'id')"
+                ></span>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  class="log-table__sort-btn"
+                  [class.log-table__sort-btn--active]="isSortActive('text')"
+                  [attr.aria-sort]="ariaSort('text')"
+                  [disabled]="loading()"
+                  (click)="onSort('text')"
+                >
+                  Текст
+                  <span class="log-table__sort-icon" aria-hidden="true">{{ sortIcon('text') }}</span>
+                </button>
+                <span
+                  class="log-table__resize-handle"
+                  role="separator"
+                  aria-orientation="vertical"
+                  [attr.aria-label]="columnResizeLabel('text')"
+                  (mousedown)="onColumnResizeStart($event, 'text')"
+                ></span>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  class="log-table__sort-btn"
+                  [class.log-table__sort-btn--active]="isSortActive('userfullname')"
+                  [attr.aria-sort]="ariaSort('userfullname')"
+                  [disabled]="loading()"
+                  (click)="onSort('userfullname')"
+                >
+                  ФИО пользователя
+                  <span class="log-table__sort-icon" aria-hidden="true">{{ sortIcon('userfullname') }}</span>
+                </button>
+                <span
+                  class="log-table__resize-handle"
+                  role="separator"
+                  aria-orientation="vertical"
+                  [attr.aria-label]="columnResizeLabel('userFullName')"
+                  (mousedown)="onColumnResizeStart($event, 'userFullName')"
+                ></span>
+              </th>
+              <th class="log-table__col-date">
+                <button
+                  type="button"
+                  class="log-table__sort-btn"
+                  [class.log-table__sort-btn--active]="isSortActive('dt')"
+                  [attr.aria-sort]="ariaSort('dt')"
+                  [disabled]="loading()"
+                  (click)="onSort('dt')"
+                >
+                  Дата
+                  <span class="log-table__sort-icon" aria-hidden="true">{{ sortIcon('dt') }}</span>
+                </button>
+                <span
+                  class="log-table__resize-handle"
+                  role="separator"
+                  aria-orientation="vertical"
+                  [attr.aria-label]="columnResizeLabel('dt')"
+                  (mousedown)="onColumnResizeStart($event, 'dt')"
+                ></span>
+              </th>
+              <th>
+                <button
+                  type="button"
+                  class="log-table__sort-btn"
+                  [class.log-table__sort-btn--active]="isSortActive('eventtypename')"
+                  [attr.aria-sort]="ariaSort('eventtypename')"
+                  [disabled]="loading()"
+                  (click)="onSort('eventtypename')"
+                >
+                  Тип события
+                  <span class="log-table__sort-icon" aria-hidden="true">{{ sortIcon('eventtypename') }}</span>
+                </button>
+                <span
+                  class="log-table__resize-handle"
+                  role="separator"
+                  aria-orientation="vertical"
+                  [attr.aria-label]="columnResizeLabel('eventType')"
+                  (mousedown)="onColumnResizeStart($event, 'eventType')"
+                ></span>
+              </th>
             </tr>
             <tr class="log-table__filters">
               <th class="log-table__col-id">

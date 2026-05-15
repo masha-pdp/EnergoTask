@@ -16,6 +16,15 @@ export interface HistoryDto {
     totalPages: number;
   }
   
+  export type HistorySortColumn =
+    | 'id'
+    | 'text'
+    | 'userfullname'
+    | 'dt'
+    | 'eventtypename';
+
+  export type SortDirection = 'asc' | 'desc';
+
   export interface HistoryQuery {
     page: number;
     pageSize: number;
@@ -25,8 +34,8 @@ export interface HistoryDto {
     eventTypeId?: number;
     dateFrom?: string;
     dateTo?: string;
-    sortBy?: string;
-    sortDirection?: string;
+    sortBy?: HistorySortColumn;
+    sortDirection?: SortDirection;
   }
 
   export const EVENT_TYPE_OPTIONS = [
@@ -34,3 +43,10 @@ export interface HistoryDto {
     { id: 2, name: 'Добавление записи' },
     { id: 3, name: 'Удаление записи' },
   ] as const;
+
+  export type LogTableColumnKey =
+    | 'id'
+    | 'text'
+    | 'userFullName'
+    | 'dt'
+    | 'eventType';

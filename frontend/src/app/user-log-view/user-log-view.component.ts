@@ -6,8 +6,21 @@ import {
   EVENT_TYPE_OPTIONS,
   HistoryDto,
   HistoryQuery,
+  HistorySortColumn,
+  LogTableColumnKey,
   PagedResult,
+  SortDirection,
 } from './user-log-view.models';
+
+const DEFAULT_COLUMN_WIDTHS: Record<LogTableColumnKey, number> = {
+  id: 72,
+  text: 320,
+  userFullName: 180,
+  dt: 220,
+  eventType: 160,
+};
+
+const MIN_COLUMN_WIDTH = 48;
 
 @Component({
   selector: 'app-user-log-view',
@@ -37,7 +50,40 @@ export class UserLogViewComponent implements OnInit, OnDestroy {
   protected readonly filterDateTo = signal('');
   protected readonly filterEventTypeId = signal<number | null>(null);
 
+  protected readonly sortBy = signal<HistorySortColumn>('dt');
+  protected readonly sortDirection = signal<SortDirection>('desc');
+
+  protected readonly columnWidths = signal<Record<LogTableColumnKey, number>>({
+    ...DEFAULT_COLUMN_WIDTHS,
+  });
+
   private filterDebounceTimer: ReturnType<typeof setTimeout> | undefined;
+  private resizeState: {
+    column: LogTableColumnKey;
+    startX: number;
+    startWidth: number;
+  } | null = null;
+
+  private readonly onColumnResizeMove = (event: MouseEvent): void => {
+    if (!this.resizeState) {
+      return;
+    }
+
+    const delta = event.clientX - this.resizeState.startX;
+    const nextWidth = Math.max(
+      MIN_COLUMN_WIDTH,
+      this.resizeState.startWidth + delta,
+    );
+
+    this.columnWidths.update((widths) => ({
+      ...widths,
+      [this.resizeState!.column]: nextWidth,
+    }));
+  };
+
+  private readonly onColumnResizeEnd = (): void => {
+    this.endColumnResize();
+  };
 
   constructor(private service: UserLogViewService) {}
 
@@ -47,6 +93,48 @@ export class UserLogViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.filterDebounceTimer);
+    this.endColumnResize();
+  }
+
+  protected columnWidth(column: LogTableColumnKey): number {
+    return this.columnWidths()[column];
+  }
+
+  protected columnResizeLabel(column: LogTableColumnKey): string {
+    const labels: Record<LogTableColumnKey, string> = {
+      id: 'Id',
+      text: 'Текст',
+      userFullName: 'ФИО пользователя',
+      dt: 'Дата',
+      eventType: 'Тип события',
+    };
+    return `Изменить ширину столбца «${labels[column]}»`;
+  }
+
+  protected onColumnResizeStart(event: MouseEvent, column: LogTableColumnKey): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.resizeState = {
+      column,
+      startX: event.clientX,
+      startWidth: this.columnWidths()[column],
+    };
+
+    document.addEventListener('mousemove', this.onColumnResizeMove);
+    document.addEventListener('mouseup', this.onColumnResizeEnd);
+    document.body.classList.add('log-table--resizing');
+  }
+
+  private endColumnResize(): void {
+    if (!this.resizeState) {
+      return;
+    }
+
+    this.resizeState = null;
+    document.removeEventListener('mousemove', this.onColumnResizeMove);
+    document.removeEventListener('mouseup', this.onColumnResizeEnd);
+    document.body.classList.remove('log-table--resizing');
   }
 
   protected previousPage(): void {
@@ -111,6 +199,35 @@ export class UserLogViewComponent implements OnInit, OnDestroy {
     this.loadHistory();
   }
 
+  protected onSort(column: HistorySortColumn): void {
+    if (this.sortBy() === column) {
+      this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(column);
+      this.sortDirection.set('asc');
+    }
+    this.page.set(1);
+    this.loadHistory();
+  }
+
+  protected isSortActive(column: HistorySortColumn): boolean {
+    return this.sortBy() === column;
+  }
+
+  protected sortIcon(column: HistorySortColumn): string {
+    if (!this.isSortActive(column)) {
+      return '';
+    }
+    return this.sortDirection() === 'asc' ? '↑' : '↓';
+  }
+
+  protected ariaSort(column: HistorySortColumn): 'ascending' | 'descending' | 'none' {
+    if (!this.isSortActive(column)) {
+      return 'none';
+    }
+    return this.sortDirection() === 'asc' ? 'ascending' : 'descending';
+  }
+
   protected hasActiveFilters(): boolean {
     return (
       this.filterId().trim() !== '' ||
@@ -136,6 +253,8 @@ export class UserLogViewComponent implements OnInit, OnDestroy {
     const query: HistoryQuery = {
       page: this.page(),
       pageSize: this.pageSize(),
+      sortBy: this.sortBy(),
+      sortDirection: this.sortDirection(),
       ...this.buildFilterQuery(),
     };
 

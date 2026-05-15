@@ -94,9 +94,15 @@
 
 .log-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.875rem;
   line-height: 1.45;
+}
+
+:global(body.log-table--resizing) {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .log-table thead {
@@ -104,12 +110,83 @@
 }
 
 .log-table th {
+  position: relative;
   text-align: left;
   font-weight: 600;
   color: #2d3748;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #dce3ed;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.log-table__resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 0.5rem;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.log-table__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  right: 0.2rem;
+  width: 2px;
+  border-radius: 1px;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.log-table__resize-handle:hover::after,
+:global(body.log-table--resizing) .log-table__resize-handle::after {
+  background: #93b4f5;
+}
+
+.log-table__sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.log-table__sort-btn:hover:not(:disabled) {
+  color: #3b5bdb;
+}
+
+.log-table__sort-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.log-table__sort-btn--active {
+  color: #3b5bdb;
+}
+
+.log-table__sort-icon {
+  display: inline-block;
+  min-width: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: #3b5bdb;
+}
+
+.log-table__col-id .log-table__sort-btn {
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .log-table__filters th {
@@ -206,6 +283,7 @@
   border-bottom: 1px solid #edf0f4;
   color: #2d3748;
   vertical-align: top;
+  overflow: hidden;
 }
 
 .log-table tbody tr:last-child td {
@@ -217,7 +295,6 @@
 }
 
 .log-table__col-id {
-  width: 4rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -233,7 +310,6 @@
 }
 
 .log-table__cell-text {
-  max-width: 28rem;
   word-break: break-word;
 }
 
