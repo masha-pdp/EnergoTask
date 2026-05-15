@@ -2,18 +2,19 @@
   <div class="log-page__inner">
     <h1 class="log-page__title">Журнал действий пользователя</h1>
 
-    @if (loading()) {
+    @if (loading() && !hasLoaded()) {
       <div class="log-page__loading" aria-busy="true">
         <span class="log-page__spinner" aria-hidden="true"></span>
         <span class="log-page__loading-text">Загрузка…</span>
       </div>
-    } @else if (data().length === 0) {
-      <div class="log-page__empty">
-        <p class="log-page__empty-title">Записей нет</p>
-        <p class="log-page__empty-hint">Журнал пуст или ничего не найдено по текущим параметрам.</p>
-      </div>
     } @else {
-      <div class="log-table-wrap">
+      <div class="log-table-wrap" [class.log-table-wrap--loading]="loading()">
+        @if (loading()) {
+          <div class="log-table-wrap__overlay" aria-busy="true">
+            <span class="log-page__spinner" aria-hidden="true"></span>
+          </div>
+        }
+
         <table class="log-table">
           <thead>
             <tr>
@@ -23,16 +24,107 @@
               <th class="log-table__col-date">Дата</th>
               <th>Тип события</th>
             </tr>
+            <tr class="log-table__filters">
+              <th class="log-table__col-id">
+                <input
+                  type="number"
+                  class="log-table__filter-input log-table__filter-input--id"
+                  [ngModel]="filterId()"
+                  (ngModelChange)="onIdFilterChange($event)"
+                  [disabled]="loading()"
+                  placeholder="Id"
+                  aria-label="Фильтр по Id"
+                  min="1"
+                />
+              </th>
+              <th>
+                <input
+                  type="search"
+                  class="log-table__filter-input"
+                  [ngModel]="filterText()"
+                  (ngModelChange)="onTextFilterChange($event, 'text')"
+                  [disabled]="loading()"
+                  placeholder="Поиск по тексту"
+                  aria-label="Фильтр по тексту"
+                />
+              </th>
+              <th>
+                <input
+                  type="search"
+                  class="log-table__filter-input"
+                  [ngModel]="filterUserFullName()"
+                  (ngModelChange)="onTextFilterChange($event, 'userFullName')"
+                  [disabled]="loading()"
+                  placeholder="Поиск по ФИО"
+                  aria-label="Фильтр по ФИО пользователя"
+                />
+              </th>
+              <th class="log-table__col-date">
+                <div class="log-table__date-filters">
+                  <input
+                    type="date"
+                    class="log-table__filter-input log-table__filter-input--date"
+                    [ngModel]="filterDateFrom()"
+                    (ngModelChange)="filterDateFrom.set($event); onDateFilterChange()"
+                    [disabled]="loading()"
+                    aria-label="Дата с"
+                  />
+                  <span class="log-table__date-sep" aria-hidden="true">—</span>
+                  <input
+                    type="date"
+                    class="log-table__filter-input log-table__filter-input--date"
+                    [ngModel]="filterDateTo()"
+                    (ngModelChange)="filterDateTo.set($event); onDateFilterChange()"
+                    [disabled]="loading()"
+                    aria-label="Дата по"
+                  />
+                </div>
+              </th>
+              <th>
+                <select
+                  class="log-table__filter-input log-table__filter-select"
+                  [ngModel]="filterEventTypeId()"
+                  (ngModelChange)="onEventTypeFilterChange($event)"
+                  [disabled]="loading()"
+                  aria-label="Фильтр по типу события"
+                >
+                  <option [ngValue]="null">Все типы</option>
+                  @for (type of eventTypeOptions; track type.id) {
+                    <option [ngValue]="type.id">{{ type.name }}</option>
+                  }
+                </select>
+              </th>
+            </tr>
           </thead>
           <tbody>
-            @for (item of data(); track item.id) {
-              <tr>
-                <td class="log-table__col-id">{{ item.id }}</td>
-                <td class="log-table__cell-text">{{ item.text }}</td>
-                <td>{{ item.userFullName }}</td>
-                <td class="log-table__col-date">{{ item.dt }}</td>
-                <td>{{ item.eventTypeName }}</td>
+            @if (data().length === 0) {
+              <tr class="log-table__empty-row">
+                <td colspan="5">
+                  @if (hasActiveFilters()) {
+                    <p class="log-table__empty-message">Ничего не найдено по текущим фильтрам.</p>
+                    <button
+                      type="button"
+                      class="log-table__clear-filters"
+                      (click)="clearFilters()"
+                      [disabled]="loading()"
+                    >
+                      Сбросить фильтры
+                    </button>
+                  } @else {
+                    <p class="log-table__empty-message">Записей нет.</p>
+                  }
+                </td>
               </tr>
+            } @else {
+              @for (item of data(); track item.id) {
+                <tr>
+                  <td class="log-table__col-id">{{ item.id }}</td>
+                  <td class="log-table__cell-text">{{ item.text }}</td>
+                  <td>{{ item.userFullName }}</td>
+                  <td class="log-table__col-date">{{ item.dt }}</td>
+                  <td>{{ item.eventTypeName }}</td>
+                </tr>
+              }
             }
           </tbody>
         </table>
@@ -49,14 +141,27 @@
         </div>
 
         <div class="log-pagination__controls">
+          @if (hasActiveFilters()) {
+            <button
+              type="button"
+              class="log-pagination__btn log-pagination__btn--secondary"
+              (click)="clearFilters()"
+              [disabled]="loading()"
+            >
+              Сбросить фильтры
+            </button>
+          }
+
           <label class="log-pagination__page-size">
             На странице
             <select
-              (change)="onPageSizeChange($event)"
+              [ngModel]="pageSize()"
+              (ngModelChange)="onPageSizeChange($event)"
+              [disabled]="loading()"
               aria-label="Количество записей на странице"
             >
               @for (size of pageSizeOptions; track size) {
-                <option [value]="size" [selected]="pageSize() === size">{{ size }}</option>
+                <option [ngValue]="size">{{ size }}</option>
               }
             </select>
           </label>
@@ -65,7 +170,7 @@
             type="button"
             class="log-pagination__btn"
             (click)="previousPage()"
-            [disabled]="page() <= 1"
+            [disabled]="loading() || page() <= 1"
           >
             Назад
           </button>
@@ -74,7 +179,7 @@
             type="button"
             class="log-pagination__btn"
             (click)="nextPage()"
-            [disabled]="totalPages() === 0 || page() >= totalPages()"
+            [disabled]="loading() || totalPages() === 0 || page() >= totalPages()"
           >
             Вперёд
           </button>

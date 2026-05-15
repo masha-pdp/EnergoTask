@@ -19,6 +19,7 @@ export interface HistoryDto {
   export interface HistoryQuery {
     page: number;
     pageSize: number;
+    id?: number;
     text?: string;
     userFullName?: string;
     eventTypeId?: number;
@@ -27,3 +28,9 @@ export interface HistoryDto {
     sortBy?: string;
     sortDirection?: string;
   }
+
+  export const EVENT_TYPE_OPTIONS = [
+    { id: 1, name: 'Редактирование' },
+    { id: 2, name: 'Добавление записи' },
+    { id: 3, name: 'Удаление записи' },
+  ] as const;

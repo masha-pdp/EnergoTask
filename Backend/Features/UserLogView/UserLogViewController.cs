@@ -27,6 +27,9 @@ public class UserLogViewController : Controller
 
     private IQueryable<History> ApplyFilters(IQueryable<History> queryDb, HistoryQueryDto query)
     {
+    if (query.Id.HasValue)
+        queryDb = queryDb.Where(h => h.Id == query.Id.Value);
+
     if (!string.IsNullOrWhiteSpace(query.Text))
         queryDb = queryDb.Where(h => h.Text.Contains(query.Text));
 

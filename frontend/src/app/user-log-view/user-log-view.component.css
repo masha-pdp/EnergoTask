@@ -68,11 +68,28 @@
 }
 
 .log-table-wrap {
+  position: relative;
   overflow-x: auto;
   border: 1px solid #e2e6ec;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.log-table-wrap--loading .log-table {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.log-table-wrap__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
 }
 
 .log-table {
@@ -93,6 +110,95 @@
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #dce3ed;
   white-space: nowrap;
+}
+
+.log-table__filters th {
+  padding: 0.5rem 0.65rem;
+  font-weight: 400;
+  background: #fff;
+  border-bottom: 1px solid #dce3ed;
+  vertical-align: middle;
+}
+
+.log-table__filter-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #dce3ed;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #2d3748;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.log-table__filter-input:focus {
+  outline: none;
+  border-color: #93b4f5;
+  box-shadow: 0 0 0 2px rgba(59, 91, 219, 0.15);
+}
+
+.log-table__filter-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.log-table__filter-input--id {
+  text-align: right;
+}
+
+.log-table__filter-input--date {
+  min-width: 7.5rem;
+}
+
+.log-table__filter-select {
+  cursor: pointer;
+}
+
+.log-table__date-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.35rem;
+}
+
+.log-table__date-sep {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.log-table__empty-row td {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #64748b;
+  background: #fafbfc;
+}
+
+.log-table__empty-message {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.log-table__clear-filters {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid #dce3ed;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.8125rem;
+  color: #3b5bdb;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.log-table__clear-filters:hover:not(:disabled) {
+  background: #f5f8ff;
+}
+
+.log-table__clear-filters:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .log-table td {
@@ -199,4 +305,15 @@
 .log-pagination__btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.log-pagination__btn--secondary {
+  background: #fff;
+  color: #3b5bdb;
+  border-color: #c5d4f7;
+}
+
+.log-pagination__btn--secondary:hover:not(:disabled) {
+  background: #f5f8ff;
+  border-color: #93b4f5;
 }
