@@ -1,24 +1,86 @@
-<h1>Журнал действий пользователя</h1>
+<div class="log-page">
+  <div class="log-page__inner">
+    <h1 class="log-page__title">Журнал действий пользователя</h1>
 
-<p>loading: {{ loading() }}</p>
-<p>records: {{ data().length }}</p>
+    @if (loading()) {
+      <div class="log-page__loading" aria-busy="true">
+        <span class="log-page__spinner" aria-hidden="true"></span>
+        <span class="log-page__loading-text">Загрузка…</span>
+      </div>
+    } @else if (data().length === 0) {
+      <div class="log-page__empty">
+        <p class="log-page__empty-title">Записей нет</p>
+        <p class="log-page__empty-hint">Журнал пуст или ничего не найдено по текущим параметрам.</p>
+      </div>
+    } @else {
+      <div class="log-table-wrap">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th class="log-table__col-id">Id</th>
+              <th>Текст</th>
+              <th>ФИО пользователя</th>
+              <th class="log-table__col-date">Дата</th>
+              <th>Тип события</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of data(); track item.id) {
+              <tr>
+                <td class="log-table__col-id">{{ item.id }}</td>
+                <td class="log-table__cell-text">{{ item.text }}</td>
+                <td>{{ item.userFullName }}</td>
+                <td class="log-table__col-date">{{ item.dt }}</td>
+                <td>{{ item.eventTypeName }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-<table border="1">
-  <tr>
-    <th>Id</th>
-    <th>Текст</th>
-    <th>ФИО пользователя</th>
-    <th>Дата</th>
-    <th>Тип события</th>
-  </tr>
+      <nav class="log-pagination" aria-label="Постраничная навигация">
+        <div class="log-pagination__info">
+          <span>
+            Страница {{ page() }} из {{ totalPages() || 1 }}
+          </span>
+          <span class="log-pagination__total">
+            Всего записей: {{ totalItems() }}
+          </span>
+        </div>
 
-  @for (item of data(); track item.id) {
-    <tr>
-      <td>{{ item.id }}</td>
-      <td>{{ item.text }}</td>
-      <td>{{ item.userFullName }}</td>
-      <td>{{ item.dt }}</td>
-      <td>{{ item.eventTypeName }}</td>
-    </tr>
-  }
-</table>
+        <div class="log-pagination__controls">
+          <label class="log-pagination__page-size">
+            На странице
+            <select
+              [value]="pageSize()"
+              (change)="onPageSizeChange($event)"
+              aria-label="Количество записей на странице"
+            >
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </label>
+
+          <button
+            type="button"
+            class="log-pagination__btn"
+            (click)="previousPage()"
+            [disabled]="page() <= 1"
+          >
+            Назад
+          </button>
+
+          <button
+            type="button"
+            class="log-pagination__btn"
+            (click)="nextPage()"
+            [disabled]="totalPages() === 0 || page() >= totalPages()"
+          >
+            Вперёд
+          </button>
+        </div>
+      </nav>
+    }
+  </div>
+</div>

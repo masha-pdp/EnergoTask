@@ -22,6 +22,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+//  Seed test dDB items:
+//
+// using (var scope = app.Services.CreateScope())
+// {
+//     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//     AppDbContext.SeedTestUsersAndHistory(db);
+// }
+
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
