@@ -52,12 +52,11 @@
           <label class="log-pagination__page-size">
             На странице
             <select
-              [value]="pageSize()"
               (change)="onPageSizeChange($event)"
               aria-label="Количество записей на странице"
             >
               @for (size of pageSizeOptions; track size) {
-                <option [value]="size">{{ size }}</option>
+                <option [value]="size" [selected]="pageSize() === size">{{ size }}</option>
               }
             </select>
           </label>
