@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { UserLogViewComponent } from './user-log-view/user-log-view.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [UserLogViewComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -1,0 +1,24 @@
+<h1>Журнал действий пользователя</h1>
+
+<p>loading: {{ loading() }}</p>
+<p>records: {{ data().length }}</p>
+
+<table border="1">
+  <tr>
+    <th>Id</th>
+    <th>Текст</th>
+    <th>ФИО пользователя</th>
+    <th>Дата</th>
+    <th>Тип события</th>
+  </tr>
+
+  @for (item of data(); track item.id) {
+    <tr>
+      <td>{{ item.id }}</td>
+      <td>{{ item.text }}</td>
+      <td>{{ item.userFullName }}</td>
+      <td>{{ item.dt }}</td>
+      <td>{{ item.eventTypeName }}</td>
+    </tr>
+  }
+</table>

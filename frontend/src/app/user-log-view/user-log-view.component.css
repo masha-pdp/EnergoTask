@@ -1,0 +1,132 @@
+.log-page {
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.log-page__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.log-page__title {
+  margin: 0 0 1.25rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #141820;
+}
+
+.log-page__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 200px;
+  border: 1px solid #e2e6ec;
+  border-radius: 8px;
+  background: #fff;
+  color: #4a5568;
+}
+
+.log-page__spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #e2e6ec;
+  border-top-color: #3b5bdb;
+  border-radius: 50%;
+  animation: log-spin 0.7s linear infinite;
+}
+
+.log-page__loading-text {
+  font-size: 0.9375rem;
+}
+
+@keyframes log-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.log-page__empty {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed #c8d0dc;
+  border-radius: 8px;
+  background: #fafbfc;
+  color: #4a5568;
+}
+
+.log-page__empty-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.log-page__empty-hint {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.log-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e2e6ec;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.log-table thead {
+  background: linear-gradient(180deg, #f7f9fc 0%, #eef2f7 100%);
+}
+
+.log-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #2d3748;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dce3ed;
+  white-space: nowrap;
+}
+
+.log-table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #edf0f4;
+  color: #2d3748;
+  vertical-align: top;
+}
+
+.log-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.log-table tbody tr:hover {
+  background: #f5f8ff;
+}
+
+.log-table__col-id {
+  width: 4rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.log-table td.log-table__col-id {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.log-table__col-date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.log-table__cell-text {
+  max-width: 28rem;
+  word-break: break-word;
+}
